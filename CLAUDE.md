@@ -18,7 +18,7 @@ Antworte auf Deutsch. Arbeite in Phasen und **stoppe an jedem Haltepunkt (⏸)**
   - WeakAuras und das Kampflog sind für Addons gesperrt, außerdem gibt es geschützte Werte („secret values“).
   - Die Funktionen zum Anlegen von Makros, Setzen von Tastenbelegungen und CVars (`CreateMacro`, `SetBinding`, `SetCVar`) funktionieren nur außerhalb des Kampfes.
 
-## Ziel-Setup (Addons, über die CurseForge-App, Flavor „Forever“)
+## Ziel-Setup (Flavor „Forever“; Quelle siehe Phase 1)
 
 | Bereich | Addon | Konfigurationsziel |
 |---|---|---|
@@ -53,14 +53,27 @@ Antworte auf Deutsch. Arbeite in Phasen und **stoppe an jedem Haltepunkt (⏸)**
 ## Phasen
 
 - **0 · Orientierung:** Repo lesen, WoW-Installation finden, freien Speicher prüfen, vorhandene Addons und den WTF-Ordner auflisten. ⏸ Bericht
-- **1 · Addon-Review:** Basti installiert die Addons über die CurseForge-App. Danach jedes Addon im Quellcode prüfen und pro Addon berichten:
+- **1 · Installation:** Zwei Wege, je nach Addon.
+  - **a) Von GitHub automatisch (5 Addons).** Neueste Release-Assets herunterladen, nach `staging/` (in `.gitignore`). Bei Mehr-Flavor-Zips über das `release.json`-Asset prüfen, dass `forever` / 16001 enthalten ist. Erst nach dem Review aus Phase 2 entpacken.
+
+    | Addon | Repo | Asset |
+    |---|---|---|
+    | Questie | `Questie/Questie` | Mehr-Flavor-Zip, ~89 MB |
+    | Plater | `Tercioo/Plater-Nameplates` | Mehr-Flavor-Zip |
+    | MinimapButtonButton | `syndenbock/MinimapButtonButton` | Mehr-Flavor-Zip |
+    | SkillUp Forever | `cjber/skillup-forever` | `*-forever.zip` |
+    | Easy Controller – Forever | `moust4ki/EasyControllerWowForever` | Forever-only-Zip |
+
+  - **b) Über die CurseForge-App (der Rest).** Für diese Addons gibt es keine GitHub-Releases. Basti installiert sie per Klick nach einer Liste, die du ihm gibst.
+  - Danach in der CurseForge-App „Scan for Addons“ ausführen und berichten, welche GitHub-Installationen CurseForge erkannt hat. Ein nicht erkanntes Addon installiert Basti über CurseForge neu, damit Updates funktionieren. ⏸
+- **2 · Addon-Review:** Jedes Addon im Quellcode prüfen, entweder aus `staging/` oder aus `Interface\AddOns`. Addons laufen erst beim Spielstart, deshalb gilt ein Review vor dem ersten Start wie ein Review vor der Installation. Pro Addon berichten:
   - was es tut, welche Abschalt-Optionen es gibt (SavedVariables-Schlüssel, Slash-Befehle, Optionsseite)
   - wo es Überschneidungen gibt, wie viel Speicher es grob braucht
   - Risiken: Taint, Hooks auf geschützte Frames, ständige Update-Schleifen
   - Für Anvilstride gibt es eine Go/No-Go-Empfehlung. Ergebnis ist `docs/addon-review.md`, und die Addon-Liste im README wird aktualisiert. ⏸ Entscheidung
-- **2 · ForeverSetup erweitern:**
-  - Neues Modul `Addons.lua`, das die Abschaltregeln aus Phase 1 beim ersten Login anwendet.
+- **3 · ForeverSetup erweitern:**
+  - Neues Modul `Addons.lua`, das die Abschaltregeln aus Phase 2 beim ersten Login anwendet.
   - Es arbeitet nur über öffentliche Optionen, Slash-Befehle oder SavedVariables-Tabellen, jeweils abgesichert mit `C_AddOns.IsAddOnLoaded` und `pcall`, und nie im Kampf.
   - Dazu ein Lua-Test mit nachgebauter WoW-API (deutscher Client). ⏸ Review
-- **3 · Nach dem ersten Login (Launch-Nacht):** Bei geschlossenem Spiel prüfen, ob die SavedVariables zu den Annahmen aus Phase 1 passen. Was die Laufzeit-Regeln nicht abdecken, offline setzen, mit Backup und Diff. ⏸
-- **4 · Testcheckliste** aus dem README gemeinsam abarbeiten und Befunde in `docs/test-log.md` festhalten.
+- **4 · Nach dem ersten Login (Launch-Nacht):** Bei geschlossenem Spiel prüfen, ob die SavedVariables zu den Annahmen aus Phase 2 passen. Was die Laufzeit-Regeln nicht abdecken, offline setzen, mit Backup und Diff. ⏸
+- **5 · Testcheckliste** aus dem README gemeinsam abarbeiten und Befunde in `docs/test-log.md` festhalten.
