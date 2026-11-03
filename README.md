@@ -11,7 +11,8 @@ Bastis Setup für **WoW Forever**: Human-Krieger (Allianz), Prot zum Leveln, Arm
 | Endgame | Arms, PvP in Battlegrounds auf einem Normal-Server. Dual-Spec ist unklar, bis dahin per Trainer umskillen. |
 | Berufe | Bergbau + Schmieden zum Leveln, später Ingenieur |
 | Controller | Native Gamepad UI (Alpha) + Easy Controller – Forever |
-| Talente | Addon **Forever Talents**: Prot-Leveling-Build einmal planen, die nächsten Punkte leuchten im Talentfenster. Export unter `ui/talents-prot-leveling.txt` |\n| UI | Blizzard-Default (Midnight-UI mit Edit Mode). Einheitenfenster und Cooldown Manager mittig unter der Figur, siehe [docs/ui-layout.md](docs/ui-layout.md) |
+| Talente | Addon **Forever Talents**: Prot-Leveling-Build einmal planen, die nächsten Punkte leuchten im Talentfenster. Export unter `ui/talents-prot-leveling.txt` |
+| UI | Blizzard-Default (Midnight-UI mit Edit Mode). Einheitenfenster und Cooldown Manager mittig unter der Figur, siehe [docs/ui-layout.md](docs/ui-layout.md) |
 
 ## Addon: ForeverSetup (v0.3)
 
