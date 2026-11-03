@@ -1,4 +1,4 @@
--- ForeverSetup – Config (v0.3)
+-- ForeverSetup – Config (v0.4)
 -- Everything you might want to change lives in this file.
 --
 -- Design:
@@ -122,6 +122,17 @@ FS.Macros = {
   -- Arms
   ["FS Spear"]   = "#showtooltip {SpearingStrike}\n/startattack\n/cast [stance:1] {SpearingStrike}; [nostance:2] {BattleStance}",
   ["FS Sweep"]   = "#showtooltip {SweepingStrikes}\n/cast [stance:1] {SweepingStrikes}; [nostance:2] {BattleStance}",
+
+  -- Consumables: ctx.items holds the best item you currently carry (see FS.Items).
+  ["FS Potion"]   = function(ctx) return ("#showtooltip item:%d\n/use item:%d"):format(ctx.items.Potion or 0, ctx.items.Potion or 0) end,
+  ["FS RagePot"]  = function(ctx) return ("#showtooltip item:%d\n/use item:%d"):format(ctx.items.RagePot or 0, ctx.items.RagePot or 0) end,
+  ["FS Bandage"]  = function(ctx) return ("#showtooltip item:%d\n/use [@player] item:%d"):format(ctx.items.Bandage or 0, ctx.items.Bandage or 0) end,
+  ["FS Food"]     = function(ctx) return ("#showtooltip item:%d\n/use item:%d"):format(ctx.items.Food or 0, ctx.items.Food or 0) end,
+  ["FS Stone"]    = function(ctx) return ("#showtooltip item:%d\n/use item:%d\n/use 16"):format(ctx.items.Stone or 0, ctx.items.Stone or 0) end,
+  ["FS Trinket1"] = "#showtooltip 13\n/use 13",
+  ["FS Trinket2"] = "#showtooltip 14\n/use 14",
+  -- Random favourite mount (mark favourites in the mount collection). Unverified in Forever.
+  ["FS Mount"]    = "#showtooltip\n/dismount [mounted]\n/run if not IsMounted() then C_MountJournal.SummonByID(0) end",
 }
 
 -- A macro only goes onto the bar once at least one of these spells is known.
@@ -144,7 +155,31 @@ FS.MacroRequires = {
   ["FS Rend"]    = { "Rend" },
   ["FS Spear"]   = { "SpearingStrike" },
   ["FS Sweep"]   = { "SweepingStrikes" },
+  -- functions: shown only when the condition holds
+  ["FS Potion"]   = function(ctx) return ctx.items.Potion ~= nil end,
+  ["FS RagePot"]  = function(ctx) return ctx.items.RagePot ~= nil end,
+  ["FS Bandage"]  = function(ctx) return ctx.items.Bandage ~= nil end,
+  ["FS Food"]     = function(ctx) return ctx.items.Food ~= nil end,
+  ["FS Stone"]    = function(ctx) return ctx.items.Stone ~= nil end,
+  ["FS Trinket1"] = function(ctx) return ctx.items.Trinket1 end,
+  ["FS Trinket2"] = function(ctx) return ctx.items.Trinket2 end,
+  ["FS Mount"]    = function(ctx) return ctx.items.HasMount end,
 }
+
+---------------------------------------------------------------------------
+-- Items. Lists are best-first; the first one you carry wins.
+-- Classic item IDs; Forever-only items can be added at the front.
+-- Food has no list: the bag is scanned for Consumable > Food & Drink and the
+-- highest-level usable one is taken (add IDs to FoodIgnore to skip drinks etc.).
+---------------------------------------------------------------------------
+FS.Items = {
+  Hearthstone = 6948,
+  Potion  = { 13446, 3928, 1710, 929, 858, 118 },                              -- healing potions
+  RagePot = { 13442, 5633, 5631 },                                             -- rage potions
+  Bandage = { 14530, 14529, 8545, 8544, 6451, 6450, 3531, 3530, 2581, 1251 },
+  Stone   = { 12404, 7964, 2871, 2863, 2862 },                                 -- sharpening stones
+}
+FS.FoodIgnore = {}
 
 -- Macros from v0.1 that no longer exist (deleted on upgrade).
 FS.ObsoleteMacros = { "FS Interrupt", "FS Overpower" }
@@ -173,7 +208,7 @@ FS.Layout = {
 
   -- Bar 2: utility, stances, cooldowns
   { key = "X",       slot = 61, all = "S:IntimidatingShout" },
-  { key = "Z",       slot = 62, all = "S:ChallengingShout" },
+  { key = "Y",       slot = 62, all = "S:ChallengingShout" },   -- QWERTZ: Y = key left of X
   { key = "BUTTON4", slot = 63, all = "M:FS Kick" },
   { key = "BUTTON5", slot = 64, all = "M:FS Charge" },
   { key = "SHIFT-1", slot = 65, all = "S:BattleStance" },
@@ -189,6 +224,19 @@ FS.Layout = {
   { key = "V",       slot = 49, all = "M:FS VRush" },
   { key = "C",       slot = 50, all = "M:FS Control" },
   { key = "SHIFT-Q", slot = 51, prot = nil,            arms = "M:FS Spear" },
+
+  -- Bar 3: consumables in combat (best item you carry, see FS.Items)
+  { key = "SHIFT-E", slot = 52, all = "M:FS Potion" },
+  { key = "SHIFT-4", slot = 53, all = "M:FS Trinket1" },
+  { key = "SHIFT-5", slot = 54, all = "M:FS Trinket2" },
+  { key = "SHIFT-6", slot = 55, all = "M:FS RagePot" },
+  { key = "SHIFT-V", slot = 56, all = "M:FS Bandage" },
+  -- Bar 3: out of combat
+  { key = "SHIFT-BUTTON5", slot = 57, all = "M:FS Mount" },
+  { key = "SHIFT-BUTTON4", slot = 58, all = "M:FS Food" },
+  { key = "CTRL-1",        slot = 59, all = "M:FS Stone" },
+  { key = "CTRL-2",        slot = 60, all = "I:Hearthstone" },
+  -- Later (Engineering): SHIFT-X / SHIFT-Y for grenades and bombs.
 }
 
 -- Copy bar-1 slots into the warrior stance pages (Battle 73-84, Def 85-96,
@@ -196,7 +244,7 @@ FS.Layout = {
 FS.StancePageOffsets = { 72, 84, 96 }
 
 -- Keys that earlier versions bound directly; cleared if still ours (and not re-used above).
-FS.LegacyKeys = { ["SHIFT-E"] = false, ["SHIFT-5"] = false, ["SHIFT-V"] = false, ["SHIFT-4"] = false }
+FS.LegacyKeys = { Z = false }   -- v0.3 had Challenging Shout on Z (QWERTZ: between T and U)
 
 -- Movement: A/D strafe instead of turning.
 FS.MovementBinds = { A = "STRAFELEFT", D = "STRAFERIGHT" }

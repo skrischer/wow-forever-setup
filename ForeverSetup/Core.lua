@@ -1,4 +1,4 @@
--- ForeverSetup – Core (v0.3)
+-- ForeverSetup – Core (v0.4)
 -- Idempotent: running again only changes what differs. Never acts in combat;
 -- queued work runs once combat ends.
 
@@ -11,10 +11,12 @@ local function Print(msg) print(PREFIX .. msg) end
 ---------------------------------------------------------------------------
 -- Compatibility helpers (Midnight-era API with classic fallbacks)
 ---------------------------------------------------------------------------
+local unpack = unpack or table.unpack
+local function pack(...) return { n = select("#", ...), ... } end
 local function try(fn, ...)
   if not fn then return nil end
-  local ok, a, b, c, d, e, f, g = pcall(fn, ...)
-  if ok then return a, b, c, d, e, f, g end
+  local r = pack(pcall(fn, ...))
+  if r[1] then return unpack(r, 2, r.n) end
 end
 
 local function SpellNameByID(id)
@@ -71,13 +73,75 @@ end
 ---------------------------------------------------------------------------
 -- Context: which set, which talents
 ---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+-- Items: what do we carry / have equipped
+---------------------------------------------------------------------------
+local function ItemCount(id)
+  return try(C_Item and C_Item.GetItemCount, id) or try(GetItemCount, id) or 0
+end
+
+local function FirstOwned(list)
+  for _, id in ipairs(list or {}) do
+    if ItemCount(id) > 0 then return id end
+  end
+end
+
+local function HasUseEffect(slot)
+  local id = try(GetInventoryItemID, "player", slot)
+  if not id then return false end
+  local spell = try(C_Item and C_Item.GetItemSpell, id) or try(GetItemSpell, id)
+  return spell ~= nil
+end
+
+local function BestFood()
+  local C = C_Container
+  if not C then return nil end
+  local level = try(UnitLevel, "player") or 60
+  local best, bestLevel = nil, -1
+  for bag = 0, 4 do
+    for slot = 1, (try(C.GetContainerNumSlots, bag) or 0) do
+      local info = try(C.GetContainerItemInfo, bag, slot)
+      local id = info and info.itemID
+      if id and not FS.FoodIgnore[id] then
+        local _, _, _, _, _, classID, subClassID = try(C_Item and C_Item.GetItemInfoInstant, id)
+        if classID == 0 and subClassID == 5 then
+          local minLevel = select(5, try(C_Item and C_Item.GetItemInfo, id)) or select(5, try(GetItemInfo, id)) or 0
+          if minLevel <= level and minLevel > bestLevel then best, bestLevel = id, minLevel end
+        end
+      end
+    end
+  end
+  return best
+end
+
+local function HasAnyMount()
+  local J = C_MountJournal
+  if not J then return false end
+  for _, mountID in ipairs(try(J.GetMountIDs) or {}) do
+    local collected = select(11, try(J.GetMountInfoByID, mountID))
+    if collected then return true end
+  end
+  return false
+end
+
+local function ScanItems()
+  local I = FS.Items or {}
+  return {
+    Potion = FirstOwned(I.Potion), RagePot = FirstOwned(I.RagePot),
+    Bandage = FirstOwned(I.Bandage), Stone = FirstOwned(I.Stone),
+    Food = BestFood(), Trinket1 = HasUseEffect(13), Trinket2 = HasUseEffect(14),
+    HasMount = HasAnyMount(),
+  }
+end
+
 local function BuildContext()
   local db = ForeverSetupDB or {}
   local set = db.set
   if set ~= "prot" and set ~= "arms" then
     set = HasSpell(FS.Talents.MortalStrike) and "arms" or "prot"
   end
-  return { set = set, vanguard = HasSpell(FS.Talents.Vanguard), forced = (db.set == "prot" or db.set == "arms") }
+  return { set = set, vanguard = HasSpell(FS.Talents.Vanguard), forced = (db.set == "prot" or db.set == "arms"),
+           items = ScanItems() }
 end
 
 ---------------------------------------------------------------------------
@@ -128,7 +192,7 @@ end
 ---------------------------------------------------------------------------
 -- Action bars
 ---------------------------------------------------------------------------
-local function Desired(content)
+local function Desired(content, ctx)
   if not content then return nil end
   local kind, ref = content:match("^(%a):(.+)$")
   if kind == "S" then
@@ -137,7 +201,9 @@ local function Desired(content)
     return id and "spell" or nil, id
   elseif kind == "M" then
     local req = FS.MacroRequires and FS.MacroRequires[ref]
-    if req then
+    if type(req) == "function" then
+      if not req(ctx) then return nil end
+    elseif req then
       local any = false
       for _, key in ipairs(req) do
         local def = FS.Spells[key]
@@ -147,11 +213,17 @@ local function Desired(content)
     end
     local idx = GetMacroIndexByName(ref)
     return (idx and idx > 0) and "macro" or nil, idx
+  elseif kind == "I" then
+    local id = (FS.Items or {})[ref]
+    if type(id) == "number" and ItemCount(id) > 0 then return "item", id end
+    return nil
   end
 end
 
-local function PlaceSlot(slot, content)
-  local wantType, wantID = Desired(content)
+local PickupItemFn = (C_Item and C_Item.PickupItem) or PickupItem
+
+local function PlaceSlot(slot, content, ctx)
+  local wantType, wantID = Desired(content, ctx)
   local curType, curID = try(GetActionInfo, slot)
   if wantType == curType and wantID == curID then return "same" end
   ClearCursor()
@@ -160,7 +232,9 @@ local function PlaceSlot(slot, content)
     ClearCursor()
   end
   if not wantType then return "cleared" end
-  if wantType == "spell" then PickupSpellFn(wantID) else PickupMacro(wantID) end
+  if wantType == "spell" then PickupSpellFn(wantID)
+  elseif wantType == "item" then PickupItemFn(wantID)
+  else PickupMacro(wantID) end
   PlaceAction(slot)
   ClearCursor()
   return "placed"
@@ -184,11 +258,13 @@ local function ApplyBars(ctx)
   for _, entry in ipairs(FS.Layout) do
     local content = ContentFor(entry, ctx)
     for _, slot in ipairs(SlotsFor(entry)) do
-      local r = PlaceSlot(slot, content)
+      local r = PlaceSlot(slot, content, ctx)
       if r == "placed" then placed = placed + 1 end
       if r == "cleared" then
         cleared = cleared + 1
-        if content and slot == entry.slot then pendingLearn = pendingLearn + 1 end
+        local itemish = content and (content:sub(1, 2) == "I:"
+          or (content:sub(1, 2) == "M:" and type((FS.MacroRequires or {})[content:sub(3)]) == "function"))
+        if content and slot == entry.slot and not itemish then pendingLearn = pendingLearn + 1 end
       end
     end
   end
@@ -258,14 +334,14 @@ local function Run(steps, quiet)
 
   if steps.macros then
     local c, u, s, f = ApplyMacros(ctx)
-    if not quiet or c + u + f > 0 then
+    if not quiet or f > 0 then
       lines[#lines + 1] = ("Makros: %d neu, %d geändert, %d unverändert%s"):format(
         c, u, s, f > 0 and (", " .. f .. " fehlgeschlagen") or "")
     end
   end
   if steps.bars then
     local p, cl, pl = ApplyBars(ctx)
-    if not quiet or p > 0 then
+    if not quiet then
       lines[#lines + 1] = ("Leisten: %d Slots gesetzt%s"):format(p,
         pl > 0 and (", " .. pl .. " warten auf noch nicht gelernte Fähigkeiten") or "")
     end
@@ -311,11 +387,11 @@ frame:SetScript("OnEvent", function(_, event)
     frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
     ForeverSetupDB = ForeverSetupDB or {}
     C_Timer.After(3, function()
-      if (ForeverSetupDB.version or 0) < 3 then
+      if (ForeverSetupDB.version or 0) < 4 then
         Run(ALL)
         ForeverSetupDB.done = true
-        ForeverSetupDB.version = 3
-        Print("Einrichtung v0.3 abgeschlossen. /fsetup für Optionen.")
+        ForeverSetupDB.version = 4
+        Print("Einrichtung v0.4 abgeschlossen. /fsetup für Optionen.")
       else
         Run(REFRESH, true)
       end
@@ -333,7 +409,9 @@ end)
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 for _, ev in ipairs({ "CHARACTER_POINTS_CHANGED", "PLAYER_TALENT_UPDATE", "SPELLS_CHANGED",
-                      "LEARNED_SPELL_IN_TAB", "LEARNED_SPELL_IN_SKILL_LINE" }) do
+                      "LEARNED_SPELL_IN_TAB", "LEARNED_SPELL_IN_SKILL_LINE",
+                      "BAG_UPDATE_DELAYED", "PLAYER_EQUIPMENT_CHANGED", "PLAYER_LEVEL_UP",
+                      "NEW_MOUNT_ADDED", "COMPANION_LEARNED" }) do
   pcall(frame.RegisterEvent, frame, ev)
 end
 

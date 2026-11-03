@@ -8,8 +8,8 @@ Antworte auf Deutsch. Arbeite in Phasen und **stoppe an jedem Haltepunkt (⏸)**
 - **Charakter:** Human-Krieger, Allianz, Normal-Server
 - **Spielweise:** Prot zum Leveln, Arms für Battlegrounds im Endgame
 - **Berufe:** erst Bergbau + Schmieden, später Ingenieur
-- **Eingabe:** Maus und Tastatur sowie ein 8BitDo-Controller (XInput) per Sunshine-Stream auf den Fernseher. Beides muss funktionieren.
-- **UI:** Blizzard-Default (Midnight-UI, Edit Mode)
+- **Eingabe:** Maus und Tastatur (**deutsche QWERTZ-Tastatur**, A/D = Seitwärtsschritt, Maus mit 2 Seitentasten) sowie ein 8BitDo-Controller (XInput) per Sunshine-Stream auf den Fernseher. Beides muss funktionieren.
+- **UI:** Blizzard-Default (Midnight-UI, Edit Mode). Kampfanzeigen kommen von Blizzard selbst: Personal Resource Display, Swing-Timer, Cooldown Manager (auch Ziel-Debuffs, Sound-Alarme), Nameplates mit Aggro-Farben. Siehe `docs/ui-layout.md`.
 - **Addon-Philosophie:** schlank. Keine doppelten Funktionen, **genau ein Pfeil** (TomTom), alle Minimap-Icons in MinimapButtonButton gebündelt.
 - **Launch:** 5.11.2026, 0:00 Uhr (MEZ). Addon-Einstellungen entstehen erst beim ersten Login in die Spielwelt.
 - **Hardware:** Ryzen 7 1700X, GTX 1070. Die SATA-SSD (~488 GB) ist **chronisch voll**, prüfe vor jeder Installation den freien Speicher.
@@ -34,11 +34,11 @@ Antworte auf Deutsch. Arbeite in Phasen und **stoppe an jedem Haltepunkt (⏸)**
 | Taschen | Baganator | |
 | Komfort | Leatrix Plus | Auto-Reparieren, Junk verkaufen; keine Auto-Quest-Annahme (Basti will Quests selbst lesen) |
 | Post | ForeverMail | |
-| Tank | Plater + ForeverThreat | Threat-Farben an |
+| Tank | – (Blizzard-Nameplates mit Aggro-Farben) | Plater/ForeverThreat nur nachrüsten, falls die eingebauten Nameplates nicht reichen. Addons sehen Ziel-Debuffs im Kampf nicht, Blizzards eigene Anzeigen schon |
 | Minimap | MinimapButtonButton | |
 | Controller | Easy Controller – Forever | |
 
-**Bewusst nicht dabei:** WeakAuras, ElvUI, ConsolePort, AtlasLoot, GearQuest, alle Karten-Addons (Leatrix Maps erst bei Bedarf), Offhand.
+**Bewusst nicht dabei:** WeakAuras, ElvUI, ConsolePort, AtlasLoot, GearQuest, alle Karten-Addons (Leatrix Maps erst bei Bedarf), Offhand, Kampf-HUDs und Swing-Timer-Addons (eingebaut), Plater/ForeverThreat (erst nach Test).
 
 ## Harte Regeln
 
@@ -55,12 +55,11 @@ Antworte auf Deutsch. Arbeite in Phasen und **stoppe an jedem Haltepunkt (⏸)**
 
 - **0 · Orientierung:** Repo lesen, WoW-Installation finden, freien Speicher prüfen, vorhandene Addons und den WTF-Ordner auflisten. ⏸ Bericht
 - **1 · Installation:** Zwei Wege, je nach Addon.
-  - **a) Von GitHub automatisch (5 Addons).** Neueste Release-Assets herunterladen, nach `staging/` (in `.gitignore`). Bei Mehr-Flavor-Zips über das `release.json`-Asset prüfen, dass `forever` / 16001 enthalten ist. Erst nach dem Review aus Phase 2 entpacken.
+  - **a) Von GitHub automatisch (4 Addons).** Neueste Release-Assets herunterladen, nach `staging/` (in `.gitignore`). Bei Mehr-Flavor-Zips über das `release.json`-Asset prüfen, dass `forever` / 16001 enthalten ist. Erst nach dem Review aus Phase 2 entpacken.
 
     | Addon | Repo | Asset |
     |---|---|---|
     | Questie | `Questie/Questie` | Mehr-Flavor-Zip, ~89 MB |
-    | Plater | `Tercioo/Plater-Nameplates` | Mehr-Flavor-Zip |
     | MinimapButtonButton | `syndenbock/MinimapButtonButton` | Mehr-Flavor-Zip |
     | SkillUp Forever | `cjber/skillup-forever` | `*-forever.zip` |
     | Easy Controller – Forever | `moust4ki/EasyControllerWowForever` | Forever-only-Zip |
@@ -76,5 +75,8 @@ Antworte auf Deutsch. Arbeite in Phasen und **stoppe an jedem Haltepunkt (⏸)**
   - Neues Modul `Addons.lua`, das die Abschaltregeln aus Phase 2 beim ersten Login anwendet.
   - Es arbeitet nur über öffentliche Optionen, Slash-Befehle oder SavedVariables-Tabellen, jeweils abgesichert mit `C_AddOns.IsAddOnLoaded` und `pcall`, und nie im Kampf.
   - Dazu ein Lua-Test mit nachgebauter WoW-API (deutscher Client). ⏸ Review
-- **4 · Nach dem ersten Login (Launch-Nacht):** Bei geschlossenem Spiel prüfen, ob die SavedVariables zu den Annahmen aus Phase 2 passen. Was die Laufzeit-Regeln nicht abdecken, offline setzen, mit Backup und Diff. ⏸
+- **4 · Nach dem ersten Login (Launch-Nacht):** Bei geschlossenem Spiel:
+  - Prüfen, ob die SavedVariables zu den Annahmen aus Phase 2 passen. Was die Laufzeit-Regeln nicht abdecken, offline setzen, mit Backup und Diff.
+  - Basti hat die eingebauten Anzeigen (Cooldown Manager, Swing-Timer, Personal Resource Display, Damage-Meter, Ziel des Ziels) einmal von Hand eingeschaltet. Aus `WTF/Config.wtf` und `WTF/Account/*/config-cache.wtf` die CVar-Namen ablesen (Diff gegen das Backup) und in `FS.CVars` übernehmen, damit Twinks sie automatisch bekommen.
+  - Edit-Mode- und Cooldown-Manager-Exporte, die Basti dir gibt, unter `ui/` ablegen. ⏸
 - **5 · Testcheckliste** aus dem README gemeinsam abarbeiten und Befunde in `docs/test-log.md` festhalten.

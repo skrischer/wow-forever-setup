@@ -1,8 +1,8 @@
 ## Interface: 16001
 ## Title: ForeverSetup
-## Notes: Basti's Warrior setup for WoW Forever: smart macros, keybinds and settings. /fsetup
+## Notes: Basti's Warrior setup for WoW Forever: smart macros, action bars, consumables, keybinds and settings. /fsetup
 ## Author: skrischer
-## Version: 0.3.0
+## Version: 0.4.0
 ## SavedVariablesPerCharacter: ForeverSetupDB
 
 Config.lua
