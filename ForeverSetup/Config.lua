@@ -1,4 +1,4 @@
--- ForeverSetup – Config (v0.2)
+-- ForeverSetup – Config (v0.3)
 -- Everything you might want to change lives in this file.
 --
 -- Design:
@@ -124,6 +124,28 @@ FS.Macros = {
   ["FS Sweep"]   = "#showtooltip {SweepingStrikes}\n/cast [stance:1] {SweepingStrikes}; [nostance:2] {BattleStance}",
 }
 
+-- A macro only goes onto the bar once at least one of these spells is known.
+-- Until then its slot stays empty (the key binding is already in place) and is
+-- filled automatically when you learn the spell.
+FS.MacroRequires = {
+  ["FS Strike"]  = { "HeroicStrike" },
+  ["FS VRush"]   = { "VictoryRush" },
+  ["FS Reakt"]   = { "Revenge", "Overpower" },
+  ["FS AoE"]     = { "ThunderClap", "Whirlwind" },
+  ["FS Block"]   = { "ShieldBlock" },
+  ["FS Taunt"]   = { "Taunt", "MockingBlow" },
+  ["FS Exec"]    = { "Execute" },
+  ["FS Control"] = { "ConcussionBlow", "Hamstring" },
+  ["FS Kick"]    = { "ShieldBash", "Pummel" },
+  ["FS Charge"]  = { "Charge", "Intercept" },
+  ["FS BigCD"]   = { "ShieldWall", "Retaliation", "Recklessness" },
+  ["FS BRage"]   = { "BerserkerRage" },
+  ["FS Disarm"]  = { "Disarm" },
+  ["FS Rend"]    = { "Rend" },
+  ["FS Spear"]   = { "SpearingStrike" },
+  ["FS Sweep"]   = { "SweepingStrikes" },
+}
+
 -- Macros from v0.1 that no longer exist (deleted on upgrade).
 FS.ObsoleteMacros = { "FS Interrupt", "FS Overpower" }
 
@@ -132,22 +154,22 @@ FS.ObsoleteMacros = { "FS Interrupt", "FS Overpower" }
 -- A single "all" applies to both sets. nil = slot left empty in that set.
 -- Bar 1 = slots 1-12 (ACTIONBUTTON1-12), Bar 2 = 61-72 (bottom left),
 -- Bar 3 = 49-60 (bottom right). Bars 4+ stay free for the gamepad UI.
--- Q / E are NOT used (strafe). Change keys here if you want.
+-- Movement: A/D strafe (see FS.MovementBinds), turning with the right mouse button.
 ---------------------------------------------------------------------------
 FS.Layout = {
-  -- Bar 1: core rotation (all stances)
+  -- Bar 1: rotation, closest keys around WASD (all stances)
   { key = "1", slot = 1,  all = "M:FS Strike" },
   { key = "2", slot = 2,  all = "S:SunderArmor" },
-  { key = "3", slot = 3,  all = "M:FS Reakt" },
-  { key = "4", slot = 4,  prot = "S:ShieldSlam",  arms = "S:MortalStrike" },
-  { key = "5", slot = 5,  all = "M:FS AoE" },
-  { key = "6", slot = 6,  prot = "M:FS Block",    arms = "S:Slam" },
-  { key = "R", slot = 7,  all = "S:DemoShout" },
-  { key = "T", slot = 8,  all = "S:BattleShout" },
-  { key = "F", slot = 9,  all = "M:FS Taunt" },
-  { key = "G", slot = 10, all = "M:FS Exec" },
-  { key = "V", slot = 11, all = "M:FS VRush" },
-  { key = "C", slot = 12, all = "M:FS Control" },
+  { key = "3", slot = 3,  all = "M:FS AoE" },
+  { key = "4", slot = 4,  prot = "M:FS Block",    arms = "S:Slam" },
+  { key = "5", slot = 5,  all = "S:Cleave" },
+  { key = "6", slot = 6,  all = "M:FS Rend" },
+  { key = "Q", slot = 7,  all = "M:FS Reakt" },
+  { key = "E", slot = 8,  prot = "S:ShieldSlam",  arms = "S:MortalStrike" },
+  { key = "R", slot = 9,  all = "S:DemoShout" },
+  { key = "T", slot = 10, all = "S:BattleShout" },
+  { key = "F", slot = 11, all = "M:FS Taunt" },
+  { key = "G", slot = 12, all = "M:FS Exec" },
 
   -- Bar 2: utility, stances, cooldowns
   { key = "X",       slot = 61, all = "S:IntimidatingShout" },
@@ -164,17 +186,20 @@ FS.Layout = {
   { key = "SHIFT-C", slot = 72, prot = "M:FS Disarm",  arms = "S:PiercingHowl" },
 
   -- Bar 3: extras
-  { key = "SHIFT-5", slot = 49, all = "S:Cleave" },
-  { key = "SHIFT-V", slot = 50, all = "M:FS Rend" },
-  { key = "SHIFT-4", slot = 51, prot = nil,            arms = "M:FS Spear" },
+  { key = "V",       slot = 49, all = "M:FS VRush" },
+  { key = "C",       slot = 50, all = "M:FS Control" },
+  { key = "SHIFT-Q", slot = 51, prot = nil,            arms = "M:FS Spear" },
 }
 
 -- Copy bar-1 slots into the warrior stance pages (Battle 73-84, Def 85-96,
 -- Berserker 97-108) so the layout survives whether stance paging works or not.
 FS.StancePageOffsets = { 72, 84, 96 }
 
--- Keys that v0.1 bound directly; restored to sane defaults if still ours.
-FS.LegacyKeys = { Q = "STRAFELEFT", E = "STRAFERIGHT", ["SHIFT-Q"] = false, ["SHIFT-E"] = false }
+-- Keys that earlier versions bound directly; cleared if still ours (and not re-used above).
+FS.LegacyKeys = { ["SHIFT-E"] = false, ["SHIFT-5"] = false, ["SHIFT-V"] = false, ["SHIFT-4"] = false }
+
+-- Movement: A/D strafe instead of turning.
+FS.MovementBinds = { A = "STRAFELEFT", D = "STRAFERIGHT" }
 
 ---------------------------------------------------------------------------
 -- Settings (CVars). Unknown ones are skipped and reported.

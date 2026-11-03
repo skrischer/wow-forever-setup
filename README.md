@@ -11,9 +11,9 @@ Bastis Setup für **WoW Forever**: Human-Krieger (Allianz), Prot zum Leveln, Arm
 | Endgame | Arms, PvP in Battlegrounds auf einem Normal-Server. Dual-Spec ist unklar, bis dahin per Trainer umskillen. |
 | Berufe | Bergbau + Schmieden zum Leveln, später Ingenieur |
 | Controller | Native Gamepad UI (Alpha) + Easy Controller – Forever |
-| UI | Blizzard-Default (Midnight-UI mit Edit Mode). Einheitenfenster und Cooldown Manager mittig unter der Figur, siehe [docs/ui-layout.md](docs/ui-layout.md) |
+| Talente | Addon **Forever Talents**: Prot-Leveling-Build einmal planen, die nächsten Punkte leuchten im Talentfenster. Export unter `ui/talents-prot-leveling.txt` |\n| UI | Blizzard-Default (Midnight-UI mit Edit Mode). Einheitenfenster und Cooldown Manager mittig unter der Figur, siehe [docs/ui-layout.md](docs/ui-layout.md) |
 
-## Addon: ForeverSetup (v0.2)
+## Addon: ForeverSetup (v0.3)
 
 Beim ersten Login richtet das Addon den Charakter ein: Makros, Aktionsleisten-Slots, Tastenbelegung und Settings. Danach hält es alles automatisch aktuell, sobald du Zauber lernst oder Talente änderst.
 
@@ -29,47 +29,51 @@ Beim ersten Login richtet das Addon den Charakter ein: Makros, Aktionsleisten-Sl
 
 Befehle: `/fsetup [all|macros|bars|binds|cvars|status|reset]` · `/fsetup set [prot|arms|auto]`
 
-### Tastenbelegung (Maus/Tastatur). Q/E bleiben Seitwärtsschritte.
+### Tastenbelegung (Maus/Tastatur)
 
-**Leiste 1: Rotation**
+Bewegung: W/S vor und zurück, **A/D Seitwärtsschritt** (drehen mit der rechten Maustaste). Q und E sind Fähigkeiten.
+
+**Leiste 1: Rotation, rund um WASD**
 
 | Taste | Prot | Arms | Logik über die Haltungen |
 |---|---|---|---|
+| Q | Revenge / Overpower | Revenge / Overpower | Def: Revenge · Battle: Overpower · Berserker: wechselt zu Battle |
+| E | Shield Slam | Mortal Strike | alle Haltungen |
 | 1 | Heroic Strike | Heroic Strike | alle Haltungen |
 | 2 | Sunder Armor | Sunder Armor | alle Haltungen |
-| 3 | Revenge / Overpower | Revenge / Overpower | Def: Revenge · Battle: Overpower · Berserker: wechselt zu Battle |
-| 4 | Shield Slam | Mortal Strike | alle Haltungen |
-| 5 | Thunder Clap / Whirlwind | Thunder Clap / Whirlwind | Battle/Def: Thunder Clap · Berserker: Whirlwind |
-| 6 | Shield Block | Slam | Shield Block nur in Def, sonst wechselt die Taste zu Def |
-| R | Demoralizing Shout | Demoralizing Shout | alle Haltungen |
-| T | Battle Shout | Battle Shout | alle Haltungen |
-| F | Taunt / Mocking Blow | Taunt / Mocking Blow | Def: Taunt · Battle: Mocking Blow · Berserker: wechselt zu Def |
+| 3 | Thunder Clap / Whirlwind | dto. | Battle/Def: Thunder Clap · Berserker: Whirlwind |
+| 4 | Shield Block | Slam | Shield Block nur in Def, sonst wechselt die Taste zu Def |
+| 5 | Cleave | Cleave | alle Haltungen |
+| 6 | Rend | Rend | Battle/Def; in Berserker wechselt die Taste zu Battle |
+| R | Demoralizing Shout | dto. | alle Haltungen |
+| T | Battle Shout | dto. | alle Haltungen |
+| F | Taunt / Mocking Blow | dto. | Def: Taunt · Battle: Mocking Blow · Berserker: wechselt zu Def |
 | G | Execute | Execute | Battle/Berserker; in Def nichts |
-| V | Victory Rush | Victory Rush | alle Haltungen (neu in Forever) |
-| C | Concussion Blow / Hamstring | Hamstring | Prot: Def Concussion Blow, sonst Hamstring · Arms: Hamstring, in Def nichts |
 
 **Leiste 2: Utility, Haltungen, Cooldowns**
 
 | Taste | Prot | Arms | Logik |
 |---|---|---|---|
-| Maus 4 | Shield Bash / Pummel | Shield Bash / Pummel | Mit Schild außerhalb Berserker: Shield Bash, sonst Pummel (wechselt zu Berserker) |
-| Maus 5 | Charge / Intercept | Charge / Intercept | Außerhalb des Kampfes: Charge (mit Vanguard auch aus Def) · Im Kampf: Intercept über Berserker |
-| X | Intimidating Shout | Intimidating Shout | alle Haltungen |
-| Z | Challenging Shout | Challenging Shout | alle Haltungen |
+| Maus 4 | Shield Bash / Pummel | dto. | Mit Schild außerhalb Berserker: Shield Bash, sonst Pummel (wechselt zu Berserker) |
+| Maus 5 | Charge / Intercept | dto. | Außerhalb des Kampfes Charge (mit Vanguard auch aus Def), im Kampf Intercept über Berserker |
+| X | Intimidating Shout | dto. | alle Haltungen |
+| Z | Challenging Shout | dto. | alle Haltungen |
 | ⇧1 / ⇧2 / ⇧3 | Battle / Defensive / Berserker Stance | dto. | |
-| ⇧R | Bloodrage | Bloodrage | alle Haltungen |
+| ⇧R | Bloodrage | dto. | alle Haltungen |
 | ⇧F | Shield Wall / Retaliation / Recklessness | dto. | großer Cooldown der jeweiligen Haltung |
 | ⇧G | Last Stand | Sweeping Strikes | Sweeping Strikes in Battle, wechselt nicht aus Def |
-| ⇧T | Berserker Rage | Berserker Rage | wechselt zu Berserker (bewusster Fear-Break) |
+| ⇧T | Berserker Rage | dto. | wechselt zu Berserker (bewusster Fear-Break) |
 | ⇧C | Disarm | Piercing Howl | Disarm in Def, sonst wechselt die Taste zu Def |
 
 **Leiste 3: Extras**
 
 | Taste | Prot | Arms |
 |---|---|---|
-| ⇧5 | Cleave | Cleave |
-| ⇧V | Rend (in Berserker wechselt die Taste zu Battle) | Rend |
-| ⇧4 | – | Spearing Strike (Battle) |
+| V | Victory Rush | Victory Rush |
+| C | Concussion Blow (Def) / Hamstring | Hamstring (nicht in Def) |
+| ⇧Q | – | Spearing Strike (Battle) |
+
+**Noch nicht gelernte Fähigkeiten:** Die Taste ist von Anfang an belegt, der Slot bleibt aber leer, bis du die Fähigkeit lernst. Dann füllt ForeverSetup ihn automatisch. Ein Makro erscheint, sobald du mindestens eine seiner Fähigkeiten kennst.
 
 Alles Einstellbare steht in [`ForeverSetup/Config.lua`](ForeverSetup/Config.lua): Tasten, Slots, Makro-Logik und Settings.
 

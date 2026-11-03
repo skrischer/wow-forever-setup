@@ -2,7 +2,7 @@
 ## Title: ForeverSetup
 ## Notes: Basti's Warrior setup for WoW Forever: smart macros, keybinds and settings. /fsetup
 ## Author: skrischer
-## Version: 0.2.0
+## Version: 0.3.0
 ## SavedVariablesPerCharacter: ForeverSetupDB
 
 Config.lua

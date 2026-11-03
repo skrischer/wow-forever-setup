@@ -28,6 +28,7 @@ Antworte auf Deutsch. Arbeite in Phasen und **stoppe an jedem Haltepunkt (⏸)**
 | Elite-Quests | UlDungeonCompanion | doppelte Dungeon-Eingangs-Pins vermeiden, falls möglich |
 | Geheimnisse | ForeverSecrets | Minimap-Knopf aus |
 | Berufe | SkillUp Forever | |
+| Talente | Forever Talents | nur Vorschau-Glühen im Talentfenster, kein Auto-Skillen |
 | Pfeil | TomTom | einziger Pfeil |
 | Auktionshaus | Auctionator | Auktionspreise im Tooltip; Händlerpreis-Anzeige prüfen (Vendor Price nur, falls Blizzard ihn nicht selbst anzeigt) |
 | Taschen | Baganator | |

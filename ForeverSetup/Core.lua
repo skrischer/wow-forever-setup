@@ -1,4 +1,4 @@
--- ForeverSetup – Core (v0.2)
+-- ForeverSetup – Core (v0.3)
 -- Idempotent: running again only changes what differs. Never acts in combat;
 -- queued work runs once combat ends.
 
@@ -136,6 +136,15 @@ local function Desired(content)
     local id = def and KnownSpellID(names[ref], def[1])
     return id and "spell" or nil, id
   elseif kind == "M" then
+    local req = FS.MacroRequires and FS.MacroRequires[ref]
+    if req then
+      local any = false
+      for _, key in ipairs(req) do
+        local def = FS.Spells[key]
+        if def and KnownSpellID(names[key], def[1]) then any = true break end
+      end
+      if not any then return nil end
+    end
     local idx = GetMacroIndexByName(ref)
     return (idx and idx > 0) and "macro" or nil, idx
   end
@@ -201,9 +210,13 @@ local function ApplyBinds()
   local ok, fail = 0, {}
   for key, default in pairs(FS.LegacyKeys or {}) do
     local action = try(GetBindingAction, key) or ""
-    if action:find("^SPELL ") or action:find("^MACRO FS ") then
+    if action:find("^SPELL ") or action:find("^MACRO FS ")
+       or action:find("^ACTIONBUTTON") or action:find("^MULTIACTIONBAR[12]BUTTON") then
       SetBinding(key, default or nil)
     end
+  end
+  for key, cmd in pairs(FS.MovementBinds or {}) do
+    if SetBinding(key, cmd) then ok = ok + 1 else fail[#fail + 1] = key end
   end
   for _, entry in ipairs(FS.Layout) do
     local cmd = BindingCommandForSlot(entry.slot)
@@ -298,11 +311,11 @@ frame:SetScript("OnEvent", function(_, event)
     frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
     ForeverSetupDB = ForeverSetupDB or {}
     C_Timer.After(3, function()
-      if (ForeverSetupDB.version or 0) < 2 then
+      if (ForeverSetupDB.version or 0) < 3 then
         Run(ALL)
         ForeverSetupDB.done = true
-        ForeverSetupDB.version = 2
-        Print("Einrichtung v0.2 abgeschlossen. /fsetup für Optionen.")
+        ForeverSetupDB.version = 3
+        Print("Einrichtung v0.3 abgeschlossen. /fsetup für Optionen.")
       else
         Run(REFRESH, true)
       end
