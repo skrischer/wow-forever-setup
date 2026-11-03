@@ -11,92 +11,87 @@ Bastis Setup für **WoW Forever**: Human-Krieger (Allianz), Prot zum Leveln, Arm
 | Endgame | Arms, PvP in Battlegrounds auf einem Normal-Server. Dual-Spec ist unklar, bis dahin per Trainer umskillen. |
 | Berufe | Bergbau + Schmieden zum Leveln, später Ingenieur |
 | Controller | Native Gamepad UI (Alpha) + Easy Controller – Forever |
-| UI | Blizzard-Default (Midnight-UI mit Edit Mode) |
+| UI | Blizzard-Default (Midnight-UI mit Edit Mode). Einheitenfenster und Cooldown Manager mittig unter der Figur, siehe [docs/ui-layout.md](docs/ui-layout.md) |
 
-## Addon: ForeverSetup
+## Addon: ForeverSetup (v0.2)
 
-Beim ersten Login richtet das Addon den Charakter automatisch ein. Danach lässt es sich jederzeit per `/fsetup` erneut ausführen.
+Beim ersten Login richtet das Addon den Charakter ein: Makros, Aktionsleisten-Slots, Tastenbelegung und Settings. Danach hält es alles automatisch aktuell, sobald du Zauber lernst oder Talente änderst.
 
-- **Lokalisierungsfest:** Zauber werden per Spell-ID aufgelöst, deutscher Client funktioniert also.
-- **Smart:** Hat der Charakter Vanguard geskillt, darf Charge auch aus Defensive Stance kommen. Bei Talent- und Zauberänderungen werden die Makros automatisch aktualisiert.
-- **Kampfsicher:** Im Kampf ändert das Addon nichts, anstehende Änderungen laufen nach dem Kampf.
-- **Idempotent:** Mehrfaches Ausführen aktualisiert, statt zu duplizieren.
-- Die Tastenbelegung wird charakterspezifisch gespeichert. Gamepad-Belegungen bleiben unangetastet.
+- **Tasten gehen auf Leisten-Slots, nicht direkt auf Zauber.** Jede Taste zeigt deshalb auf ihrem Knopf Cooldown, Reichweite und ob die Fähigkeit gerade nutzbar ist.
+- **Eine Taste = eine Rolle, in allen Haltungen.** Zauber, die in mehreren Haltungen gehen, liegen überall auf derselben Taste. Zauber, die nur in einer Haltung gehen, teilen sich eine Taste mit ihrem Gegenstück. Beispiel ⇧F: Shield Wall in Def, Retaliation in Battle, Recklessness in Berserker.
+- **Falsche Haltung:** Drückst du eine Fähigkeit in der falschen Haltung, wechselt die Taste in die richtige. Tactical Mastery behält dabei 10 Rage, ein zweiter Druck löst die Fähigkeit aus.
+- **Tank-Regel:** Keine Taste verlässt die Defensive Stance von selbst. Ausnahmen sind nur die bewusst gedrückten: Charge/Intercept, Berserker Rage und Pummel ohne Schild.
+- **Unabhängig vom Umblättern der Leiste:** Blizzards automatisches Umblättern pro Haltung war in der Beta kaputt. Leiste 1 wird zusätzlich in die Haltungs-Seiten kopiert, die Belegung funktioniert also in beiden Fällen.
+- **Prot- und Arms-Set:** Sobald du Mortal Strike kennst, ist Arms aktiv. Die Tasten bleiben gleich, nur die Inhalte wechseln. Festlegen lässt sich das per `/fsetup set prot|arms|auto`.
+- **Höchster Rang:** Neu gelernte Ränge landen automatisch auf der Leiste.
+- **Lokalisierungsfest** (Spell-IDs), **kampfsicher** (nichts im Kampf) und **idempotent** (mehrfaches Ausführen ändert nur Abweichungen).
+- **Gamepad bleibt unangetastet:** Leiste 4 und höher und die Controller-Belegungen fasst das Addon nicht an.
 
-Befehle: `/fsetup [all|macros|binds|cvars|status|reset]`
+Befehle: `/fsetup [all|macros|bars|binds|cvars|status|reset]` · `/fsetup set [prot|arms|auto]`
 
-### Makros
+### Tastenbelegung (Maus/Tastatur). Q/E bleiben Seitwärtsschritte.
 
-| Makro | Logik |
-|---|---|
-| FS Charge | Außerhalb des Kampfes Charge (mit Vanguard auch aus Defensive), im Kampf Berserker Stance → Intercept |
-| FS Interrupt | Mit Schild Shield Bash, sonst Berserker Stance → Pummel |
-| FS Overpower | Battle Stance → Overpower (Tactical Mastery ist jetzt baseline) |
-| FS BRage | Berserker Stance → Berserker Rage (Fear-Break) |
-| FS Taunt | Defensive: Taunt, Battle: Mocking Blow, sonst → Defensive Stance |
-| FS Strike | /startattack, Heroic Strike, mit Shift Cleave |
-| FS VRush | Victory Rush (neu in Forever) |
-| FS Spear | Battle Stance → Spearing Strike (Arms) |
+**Leiste 1: Rotation**
 
-### Tastenbelegung (Maus/Tastatur)
-
-| Taste | Belegung | Shift + Taste | Belegung |
+| Taste | Prot | Arms | Logik über die Haltungen |
 |---|---|---|---|
-| 1 | FS Strike | Shift-1 | Battle Stance |
-| 2 | Revenge | Shift-2 | Defensive Stance |
-| 3 | Sunder Armor | Shift-3 | Berserker Stance |
-| 4 | Shield Block | | |
-| 5 | Thunder Clap | | |
-| Q | Shield Slam | Shift-Q | Bloodrage |
-| E | FS VRush | Shift-E | FS Overpower |
-| R | Demoralizing Shout | Shift-R | FS BRage |
-| F | FS Taunt | Shift-F | Shield Wall |
-| G | Battle Shout | Shift-G | Last Stand |
+| 1 | Heroic Strike | Heroic Strike | alle Haltungen |
+| 2 | Sunder Armor | Sunder Armor | alle Haltungen |
+| 3 | Revenge / Overpower | Revenge / Overpower | Def: Revenge · Battle: Overpower · Berserker: wechselt zu Battle |
+| 4 | Shield Slam | Mortal Strike | alle Haltungen |
+| 5 | Thunder Clap / Whirlwind | Thunder Clap / Whirlwind | Battle/Def: Thunder Clap · Berserker: Whirlwind |
+| 6 | Shield Block | Slam | Shield Block nur in Def, sonst wechselt die Taste zu Def |
+| R | Demoralizing Shout | Demoralizing Shout | alle Haltungen |
+| T | Battle Shout | Battle Shout | alle Haltungen |
+| F | Taunt / Mocking Blow | Taunt / Mocking Blow | Def: Taunt · Battle: Mocking Blow · Berserker: wechselt zu Def |
+| G | Execute | Execute | Battle/Berserker; in Def nichts |
+| V | Victory Rush | Victory Rush | alle Haltungen (neu in Forever) |
+| C | Concussion Blow / Hamstring | Hamstring | Prot: Def Concussion Blow, sonst Hamstring · Arms: Hamstring, in Def nichts |
 
-Maustasten: Seitentaste 4 = FS Interrupt, Seitentaste 5 = FS Charge.
+**Leiste 2: Utility, Haltungen, Cooldowns**
 
-⚠️ Q und E ersetzen die Standard-Strafe-Tasten. Das lässt sich in `Config.lua` ändern.
+| Taste | Prot | Arms | Logik |
+|---|---|---|---|
+| Maus 4 | Shield Bash / Pummel | Shield Bash / Pummel | Mit Schild außerhalb Berserker: Shield Bash, sonst Pummel (wechselt zu Berserker) |
+| Maus 5 | Charge / Intercept | Charge / Intercept | Außerhalb des Kampfes: Charge (mit Vanguard auch aus Def) · Im Kampf: Intercept über Berserker |
+| X | Intimidating Shout | Intimidating Shout | alle Haltungen |
+| Z | Challenging Shout | Challenging Shout | alle Haltungen |
+| ⇧1 / ⇧2 / ⇧3 | Battle / Defensive / Berserker Stance | dto. | |
+| ⇧R | Bloodrage | Bloodrage | alle Haltungen |
+| ⇧F | Shield Wall / Retaliation / Recklessness | dto. | großer Cooldown der jeweiligen Haltung |
+| ⇧G | Last Stand | Sweeping Strikes | Sweeping Strikes in Battle, wechselt nicht aus Def |
+| ⇧T | Berserker Rage | Berserker Rage | wechselt zu Berserker (bewusster Fear-Break) |
+| ⇧C | Disarm | Piercing Howl | Disarm in Def, sonst wechselt die Taste zu Def |
 
-## Addon-Liste (über die CurseForge-App installieren, Flavor „Forever“)
+**Leiste 3: Extras**
 
-| Addon | Zweck | Hinweis |
+| Taste | Prot | Arms |
 |---|---|---|
-| Questie | Questhilfe | läuft mit den Forever-Zonen |
-| Questie Gamepad Fix | Questie mit Controller | |
-| Easy Controller – Forever | Controller-Komfort | baut auf der nativen Gamepad UI auf |
-| Baganator | Taschen | |
-| Auctionator | Auktionshaus | TSM gibt es noch nicht für Forever |
-| ForeverMail | Post | Ersatz für Postal |
-| Plater | Nameplates mit Threat-Farben | wichtigstes Tank-Werkzeug |
-| ForeverThreat | Threat-Meter | Threat-API teilweise eingeschränkt, Lücken möglich |
-| Leatrix Plus | Komfortfunktionen (QoL) | alles modular, standardmäßig aus |
-| Leatrix Maps | Karte | nur ein Karten-Addon nutzen |
-| Vendor Price | Händlerpreise im Tooltip | |
-| AtlasLoot Classic Forever | Dungeon- und Raid-Loot, BiS-Listen | Abdeckung der neuen Forever-Dungeons unklar |
-| Atlas Forever | Dungeon-Karten | enthält 3 Forever-Dungeons |
-| My Forever Recipe Book | Rezept-Datenbank: wo lernen, welche Quelle | noch Beta |
-| *optional:* ForeverCodex | Handwerk in der Gilde teilen | |
+| ⇧5 | Cleave | Cleave |
+| ⇧V | Rend (in Berserker wechselt die Taste zu Battle) | Rend |
+| ⇧4 | – | Spearing Strike (Battle) |
 
-**Bewusst nicht dabei:**
-- WeakAuras: funktioniert in Forever nicht. Ersatz ist der eingebaute Cooldown Manager.
-- Details: zeigt nur die Zahlen des eingebauten Damage-Meters.
-- ElvUI: würde den Blizzard-Look ersetzen.
-- ConsolePort: komplex und störanfällig.
+Alles Einstellbare steht in [`ForeverSetup/Config.lua`](ForeverSetup/Config.lua): Tasten, Slots, Makro-Logik und Settings.
 
-## Testplan ab 27.10. (Charaktererstellung)
+## Addons
+
+Das Ziel-Setup steht in der [CLAUDE.md](CLAUDE.md). Grundsätze: schlank, genau ein Pfeil (TomTom), Minimap-Icons gebündelt (MinimapButtonButton). Fünf Addons kommen von GitHub, der Rest über die CurseForge-App.
+
+## Testplan (ab sofort, Charaktererstellung ist offen)
 
 1. Client installieren und den echten Ordnernamen prüfen: Battle.net → Zahnrad → „Im Explorer anzeigen“. In der Beta hieß er `_classic_beta_`.
-2. `ForeverSetup/` nach `Interface/AddOns/` kopieren und Charakter erstellen.
-3. Einloggen, dann `/fsetup status` aufrufen. Prüfen, ob Zauber per Fallback-Namen aufgelöst wurden, vor allem die Victory-Rush-ID.
-4. Makros im Makro-Fenster kontrollieren und Tasten am Trainingsdummy testen.
-5. Ausloggen und wieder einloggen. Prüfen, ob die Server-Synchronisierung etwas überschreibt.
-6. Controller: Gamepad UI aktivieren und Edit-Mode-Layout getrennt anlegen. Prüfen, ob Controller-Leisten dieselben Slots wie Maus/Tastatur belegen.
-7. Sunshine-Stream starten und beenden. Danach prüfen, ob das UI im Controller-Modus hängen bleibt.
-8. Cooldown Manager und Damage-Meter in den Optionen aktivieren und die CVar-Namen für `Config.lua` notieren.
+2. ForeverSetup per Junction nach `Interface\AddOns\` verlinken und Charakter erstellen.
+3. Edit Mode: **Aktionsleisten 2 und 3 einblenden**, Einheitenfenster und Cooldown Manager einrichten, siehe [docs/ui-layout.md](docs/ui-layout.md).
+4. `/fsetup status` aufrufen. Prüfen, ob Zauber per Fallback-Namen aufgelöst wurden, vor allem die Victory-Rush-ID.
+5. Am Trainingsdummy jede Taste in allen drei Haltungen testen. Prüfen, ob Blizzard die Leiste pro Haltung umblättert (falls ja, ist das egal).
+6. Ausloggen und wieder einloggen. Prüfen, ob die Server-Synchronisierung Leisten oder Tasten überschreibt.
+7. Controller: Gamepad UI aktivieren und ein eigenes Edit-Mode-Layout anlegen. Prüfen, welche Slots die Controller-Leisten nutzen. Kollisionen mit Leiste 1–3 notieren.
+8. Sunshine-Stream starten und beenden. Danach prüfen, ob das UI im Controller-Modus hängen bleibt.
 
 ## Offene Punkte
 
 - **Gamepad-Belegung:** Die Tastenvergabe am Controller wird nach dem Test festgelegt, Grundlage sind die 4 Sets à 8 Tasten der nativen Gamepad UI.
+- **Haltungs-Anforderungen in Forever:** Ungeprüft ist, ob Thunder Clap und Shield Bash in Battle und Def gehen, Hamstring und Execute in Battle und Berserker, und ob Shield Wall, Retaliation und Recklessness sich einen Cooldown teilen. Die Werte stammen aus Classic beziehungsweise Beta-Guides.
 - **Berufe:** Wann der Wechsel von Schmieden zu Ingenieur kommt, ist noch offen.
 - **Dual-Spec:** Status beobachten.
 - **Arms-PvP-Build:** Bisher gibt es nur einen Theorycraft-Build, er wird nach dem Launch validiert.
