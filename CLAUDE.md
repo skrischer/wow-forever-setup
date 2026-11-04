@@ -51,7 +51,7 @@ Nach jeder Änderung an ForeverSetup: `python tests/mock_client_test.py` muss mi
 4. **Keine fremden EXEs ausführen oder installieren.** Keine Begleit-Apps, Offhand Companion, ForeverDubbed-App oder Ähnliches.
 5. **Battle.net-Client und Account nicht anfassen.**
 6. **ForeverSetup per Junction verlinken** (`mklink /J`, Repo → `Interface\AddOns\ForeverSetup`), nicht kopieren.
-7. **Nicht pushen** ohne Bastis OK. Commits mit Attribution sind ok. Das Remote ist `github.com/skrischer/wow-forever-setup` (privat).
+7. **Nicht pushen** ohne Bastis OK. Commits mit Attribution sind ok. Das Remote ist `github.com/skrischer/wow-forever-setup` (derzeit öffentlich).
 8. **Ehrlichkeit:** Was nur aus Code oder Doku abgeleitet ist und nicht im Spiel getestet wurde, wird als „ungetestet“ markiert.
 
 ## Phasen
