@@ -94,6 +94,10 @@ Alles Einstellbare steht in [`ForeverSetup/Config.lua`](ForeverSetup/Config.lua)
 
 Das Ziel-Setup steht in der [CLAUDE.md](CLAUDE.md). Grundsätze: schlank, genau ein Pfeil (TomTom), Minimap-Icons gebündelt (MinimapButtonButton). Fünf Addons kommen von GitHub, der Rest über die CurseForge-App.
 
+## Test ohne Spiel
+
+`pip install lupa`, danach `python tests/mock_client_test.py`. Das spielt ForeverSetup gegen einen nachgebauten deutschen Client durch und prüft die Logik, nicht den echten Client.
+
 ## Testplan (ab sofort, Charaktererstellung ist offen)
 
 1. Client installieren und den echten Ordnernamen prüfen: Battle.net → Zahnrad → „Im Explorer anzeigen“. In der Beta hieß er `_classic_beta_`.

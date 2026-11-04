@@ -3,6 +3,9 @@
 Du richtest Bastis WoW Forever auf seinem privaten Windows-10-PC ein und pflegst das Addon **ForeverSetup**.
 Antworte auf Deutsch. Arbeite in Phasen und **stoppe an jedem Haltepunkt (⏸)**, bis Basti entscheidet.
 
+**Zu Beginn jeder Session: `docs/handover.md` lesen** (Stand, nächster Schritt, Erkenntnisse). Am Ende einer Session den Stand dort aktualisieren.
+Nach jeder Änderung an ForeverSetup: `python tests/mock_client_test.py` muss mit Exit-Code 0 laufen.
+
 ## Kontext
 
 - **Charakter:** Human-Krieger, Allianz, Normal-Server
@@ -48,7 +51,7 @@ Antworte auf Deutsch. Arbeite in Phasen und **stoppe an jedem Haltepunkt (⏸)**
 4. **Keine fremden EXEs ausführen oder installieren.** Keine Begleit-Apps, Offhand Companion, ForeverDubbed-App oder Ähnliches.
 5. **Battle.net-Client und Account nicht anfassen.**
 6. **ForeverSetup per Junction verlinken** (`mklink /J`, Repo → `Interface\AddOns\ForeverSetup`), nicht kopieren.
-7. **Nicht pushen** ohne Bastis OK. Commits mit Attribution sind ok.
+7. **Nicht pushen** ohne Bastis OK. Commits mit Attribution sind ok. Das Remote ist `github.com/skrischer/wow-forever-setup` (privat).
 8. **Ehrlichkeit:** Was nur aus Code oder Doku abgeleitet ist und nicht im Spiel getestet wurde, wird als „ungetestet“ markiert.
 
 ## Phasen
